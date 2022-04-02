@@ -234,6 +234,8 @@ public class ConnectFour{
             System.out.println("Player: PC");
             System.out.print("Next Play: ");
             column = sc.nextInt();
+            //column = findNextPCPlay();
+            //System.out.print(column);
             System.out.println();
         }
         //Verifica se a coluna já está cheia
