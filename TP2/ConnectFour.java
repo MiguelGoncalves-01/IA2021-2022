@@ -11,10 +11,22 @@ class Board{
     char[][] matrix;
 
     /**
+     * Número de espaços disponíveis para jogar no início do jogo
+     */
+    int availablePlays;
+
+    /**
+     * Guarda a última jogada. X em [0], Y em [1];
+     */
+    int[] lastPlay;
+
+    /**
      * Inicia o tabuleiro com todas as posições a 0, representadas por "-"
      */
     Board(){
         matrix = new char[7][6];
+        availablePlays = 42;
+        lastPlay = new int[2];
 
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 7; j++){
@@ -30,7 +42,6 @@ class Board{
 public class ConnectFour{
     public static Scanner sc = new Scanner(System.in);
     public static Board board = new Board();
-
     /**
      * Jogador atual.
      * false = Humano,
@@ -39,61 +50,209 @@ public class ConnectFour{
     public static boolean PC;
 
     /**
-     * Verifica se o jogo acabou com algum dos jogadores vencedores e imprime o resultado.
-     * Retorna TRUE se o jogo acabou.
+     * Função que vê se o ponto a verificar está outOfBounds ou não
+     * @param x
+     * @param y
+     * @return false or true
      */
-    public static boolean checkGameState(){
+    public static boolean outOfBounds(int x, int y){
+        if(x < 0 || y < 0 || x > 6 || y > 5) return true;
         return false;
-        return true;
     }
 
     /**
-     * Função invocada depois do updateBoard(). Processa o pedido e atualiza o tabuleiro de acordo.
+     * Função que verifica se o último ponto colocado formou uma linha
+     * @param lastPlayType
+     * @return false se não formou linha de 4. true se formou linha de 4
+     */
+    public static boolean formedLine(char lastPlayType){
+        int counter = 1;
+        int tempX = board.lastPlay[0];
+        int tempY = board.lastPlay[1];
+
+        //UP
+        for(int i = 0; i < 3; i++){
+            tempY--;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //DOWN
+        for(int i = 0; i < 3; i++){
+            tempY++;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //RIGHT
+        for(int i = 0; i < 3; i++){
+            tempX++;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //LEFT
+        for(int i = 0; i < 3; i++){
+            tempX--;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //DIAGONAL RIGHT UP
+        for(int i = 0; i < 3; i++){
+            tempX++;
+            tempY--;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //DIAGONAL LEFT UP
+        for(int i = 0; i < 3; i++){
+            tempX--;
+            tempY--;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //DIAGONAL RIGHT DOWN
+        for(int i = 0; i < 3; i++){
+            tempX++;
+            tempY++;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        tempX = board.lastPlay[0];
+        tempY = board.lastPlay[1];
+        counter = 1;
+
+        //DIAGONAL LEFT DOWN
+        for(int i = 0; i < 3; i++){
+            tempX--;
+            tempY++;
+            if(outOfBounds(tempX, tempY)) break;
+            if(board.matrix[tempX][tempY] != lastPlayType) break;
+            counter++;
+        }
+        if(counter == 4) return true;
+        return false;
+    }
+
+    /**
+     * Verifica se o jogo acabou com algum dos jogadores vencedores.
+     * Retorna TRUE se o jogo acabou.
+     * @return false or true
+     */
+    public static boolean checkGameState(){
+        char lastPlayType = board.matrix[board.lastPlay[0]][board.lastPlay[1]];
+        boolean formedLine = formedLine(lastPlayType);
+
+        if(board.availablePlays == 0 && !formedLine){
+            System.out.print("The game ended!\nIt was a DRAW!\n--------------\n");
+            return true;
+        }
+        if(formedLine){
+            if(lastPlayType == 'X'){
+                System.out.print("The game ended!\nJogador WON!\n--------------\n");
+                return true;
+            }
+            System.out.print("The game ended!\nPC WON!\n--------------\n");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Função invocada depois do nextPlay(). Processa o pedido e atualiza o tabuleiro de acordo.
      */
     public static void updateBoard(int column){
-        if(board.matrix[column][0] == 'X'){
-            System.out.println("Column full! Choose another spot!");
-            System.out.print("Next Play: ");
-            updateBoard(sc.nextInt());
-        }
         for(int i = 5; i >= 0; i--){
             if(board.matrix[column][i] == '-'){
-                board.matrix[column][i] = 'X';
-                break;
+                if(PC){
+                    board.matrix[column][i] = 'O';
+                    board.lastPlay[0] = column;
+                    board.lastPlay[1] = i;
+                    break;
+                }
+                else{
+                    board.matrix[column][i] = 'X';
+                    board.lastPlay[0] = column;
+                    board.lastPlay[1] = i;
+                    break;
+                }
             }
         }
         printBoard();
+        board.availablePlays--;
     }
 
     /**
-     * Função de próxima jogada. Ou pede ao jogador a sua próxima jogada, ou ao PC.
+     * Função de próxima jogada. Ou pede ao jogador a sua próxima jogada, ou ao PC. Invoca a função updateBoard()
      */
     public static void nextPlay(){
         int column;
         if(!PC){
+            //Jogador escolhe a próxima jogada e coloca o valor em 'column'
             System.out.println("Player: Jogador");
             System.out.print("Next Play: ");
             column = sc.nextInt();
             System.out.println();
         }
         else{
+            //PC escolhe a próxima jogada e coloca o valor em 'column'
             System.out.println("Player: PC");
-            column = 5;
+            System.out.print("Next Play: ");
+            column = sc.nextInt();
+            System.out.println();
         }
-        updateBoard(column);
+        //Verifica se a coluna já está cheia
+        if(board.matrix[column][0] != '-'){
+            System.out.println("Column full! Choose another spot!");
+            nextPlay();
+        }
+        else{
+            updateBoard(column);
+            PC = !PC;
+        }
     }
 
     /**
-     * Função que chama as outras funções para correr o jogo.
+     * Função cíclica que chama as outras funções para correr o jogo.
      */
     public static void gameCycle(){
         nextPlay();
-
-        if(checkGameState()){
-            System.out.println("O Jogo acabou!\nVencedor: ");
-            if(PC) System.out.print("PC");
-            else System.out.print("Jogador");
-        }
+        if(checkGameState()) return;
         gameCycle();
     }
 
@@ -129,9 +288,6 @@ public class ConnectFour{
     public static void main(String[] args)
     {
         chooseFirstPlayer();
-
-        PC = false;
-        if(PC) System.exit(1);
         printBoard();
         gameCycle();
     }
