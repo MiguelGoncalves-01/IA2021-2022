@@ -70,6 +70,7 @@ public class ConnectFour{
         int tempX = board.lastPlay[0];
         int tempY = board.lastPlay[1];
 
+        /*
         //UP
         for(int i = 0; i < 3; i++){
             tempY--;
@@ -81,7 +82,7 @@ public class ConnectFour{
         tempX = board.lastPlay[0];
         tempY = board.lastPlay[1];
         counter = 1;
-
+        */
         //DOWN
         for(int i = 0; i < 3; i++){
             tempY++;
