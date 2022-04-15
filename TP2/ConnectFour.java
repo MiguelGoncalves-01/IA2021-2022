@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.Random;
+import java.util.Scanner;
 
 /**
  * Class do Tabuleiro do jogo Connect4. Construção do tabuleiro e guardar o estado de jogo atual
@@ -282,7 +283,7 @@ public class ConnectFour{
      */
     public static void chooseFirstPlayer(){
         Random rand = new Random();
-        int randomNum = rand.nextInt(0, 1 + 1);
+        int randomNum = rand.nextInt((1 - 0) + 1) + 0;
 
         if(randomNum == 0) PC = false;
         else PC = true;
