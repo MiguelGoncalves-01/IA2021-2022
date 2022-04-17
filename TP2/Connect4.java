@@ -22,6 +22,7 @@ class Board{
      */
     int[] lastPlay;
 
+    Board fatherNode;
     /**
      * Inicia o tabuleiro com todas as posições a 0, representadas por "-"
      */
@@ -29,12 +30,20 @@ class Board{
         matrix = new char[7][6];
         availablePlays = 42;
         lastPlay = new int[2];
+        fatherNode = null;
 
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 7; j++){
                 matrix[j][i] = '-';
             }
         }
+    }
+
+    Board(Board newFatherNode){
+        matrix = fatherNode.matrix;
+        availablePlays = fatherNode.availablePlays - 1;
+        lastPlay = new int[2];
+        this.fatherNode = newFatherNode;
     }
 }
 
@@ -73,19 +82,6 @@ public class Connect4{
         int tempX = board.lastPlay[0];
         int tempY = board.lastPlay[1];
 
-        /*
-        //UP
-        for(int i = 0; i < 3; i++){
-            tempY--;
-            if(outOfBounds(tempX, tempY)) break;
-            if(board.matrix[tempX][tempY] != lastPlayType) break;
-            counter++;
-        }
-        if(counter == 4) return true;
-        tempX = board.lastPlay[0];
-        tempY = board.lastPlay[1];
-        counter = 1;
-        */
         //DOWN
         for(int i = 0; i < 3; i++){
             tempY++;
