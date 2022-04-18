@@ -28,6 +28,10 @@ class Board{
 
     int depth;
 
+    int column;
+
+    int value;
+
     /**
      * Inicia o tabuleiro com todas as posições a 0, representadas por "-"
      */
@@ -38,6 +42,8 @@ class Board{
         this.fatherNode = null;
         this.children = new LinkedList<Board>();
         this.depth = 0;
+        this.column = 0;
+        this.value = 0;
 
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 7; j++){
@@ -46,13 +52,20 @@ class Board{
         }
     }
 
-    Board(Board newFatherNode, int inputDepth){
-        this.matrix = newFatherNode.matrix;
+    Board(Board newFatherNode, int inputDepth, int inputColumn){
+        this.matrix = new char[7][6];
+        for(int i = 0; i < 7; i++){
+            for(int j = 0; j < 6; j++){
+                this.matrix[i][j] = newFatherNode.matrix[i][j];
+            }
+        }
         this.availablePlays = newFatherNode.availablePlays - 1;
         this.lastPlay = new int[2];
         this.fatherNode = newFatherNode;
         this.children = new LinkedList<Board>();
         this.depth = inputDepth;
+        this.column = inputColumn;
+        this.value = 0;
     }
 }
 
@@ -70,6 +83,16 @@ public class ConnectFour{
      * true = PC
      */
     public static boolean PC;
+    public static boolean PCtree;
+
+    public static void cloneMatriz(char[][] matriz1, char[][] matriz2)
+    {
+        for(int i = 0; i < 7; i++){
+            for(int j = 0; j < 6; j++){
+                matriz1[i][j] = matriz2[i][j];
+            }
+        }
+    }
 
     /**
      * Função que vê se o ponto a verificar está outOfBounds ou não
@@ -223,7 +246,7 @@ public class ConnectFour{
                 }
             }
         }
-        printBoard();
+        printBoard(board);
         board.availablePlays--;
     }
 
@@ -232,35 +255,22 @@ public class ConnectFour{
      */
     public static void treeStartup(int dificultyLevel){
         int currentDepth = 0;
+        int previousDepth = 0;
 
         list.add(board);
-        System.out.println("DIFICULTY: " + dificultyLevel);
-        System.out.println("CURRENT NODE BEFORE: " + list.size());
 
         while(!list.isEmpty()){
             Board cNode = list.remove();
-            System.out.println("DEPTH ANTES: " + currentDepth);
             currentDepth = cNode.depth + 1;
-            System.out.println("DEPTH DEPOIS: " + currentDepth);
+            if(currentDepth != previousDepth){
+                PCtree = !PCtree;
+                previousDepth++;
+            }
             if(currentDepth <= dificultyLevel){
                 findChildren(cNode, currentDepth);
-                System.out.println("CURRENT NODE: " + list.size());
             }
             else break;
         }
-        /*
-        for(int i = 0; i < dificultyLevel; i++){
-            int size = tree.size();
-            System.out.println("CURRENT NODE BEFORE: " + size + ", iteration: " + i);
-            for(int j = 0; j < size; j++){
-                Board node = tree.get(j);
-                if(node.depth == currentDepth){
-                    findChildren(node, node.depth);
-                }
-            }
-            currentDepth++;
-            System.out.println("CURRENT NODES AFTER: " + size + ", iteration: " + i);
-        }*/
     }
     
     /**
@@ -277,16 +287,18 @@ public class ConnectFour{
      * @param currentBoard
      */
     public static void findChildren(Board currentBoard, int depth){
-        char[][] matrixTemp = currentBoard.matrix;
-        
+        Board child;
         for(int i = 0; i < 7; i++)
         {
             if(currentBoard.matrix[i][0] == '-'){
                 for(int j = 5; j >= 0; j--){
                     if(currentBoard.matrix[i][j] == '-'){
-                        matrixTemp[i][j] = 'O';
-                        Board child = new Board(currentBoard, depth);
-                        child.matrix = matrixTemp;
+                        char[][] matrixTemp = new char[7][6];
+                        cloneMatriz(matrixTemp, currentBoard.matrix);
+                        if(PCtree) matrixTemp[i][j] = 'O';
+                        else matrixTemp[i][j] = 'X';
+                        child = new Board(currentBoard, depth, i);
+                        cloneMatriz(child.matrix, matrixTemp);
                         child.lastPlay[0] = i;
                         child.lastPlay[1] = j;
                         currentBoard.children.add(child);
@@ -379,7 +391,7 @@ public class ConnectFour{
     /**
      * Imprimir estado do jogo atual
      */
-    public static void printBoard(){
+    public static void printBoard(Board currentBoard){
         System.out.println("--------------");
         for(int i = 0; i < 7; i++){
             System.out.print(i + " ");
@@ -387,7 +399,7 @@ public class ConnectFour{
         System.out.println();
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 7; j++){
-                System.out.print(board.matrix[j][i] + " ");
+                System.out.print(currentBoard.matrix[j][i] + " ");
             }
             System.out.println();
         }
@@ -401,8 +413,14 @@ public class ConnectFour{
         Random rand = new Random();
         int randomNum = rand.nextInt((1 - 0) + 1) + 0;
 
-        if(randomNum == 0) PC = false;
-        else PC = true;
+        if(randomNum == 0){
+            PC = false;
+            PCtree = false;
+        }
+        else{
+            PC = true;
+            PCtree = true;
+        }
     }
     
     public static int chooseDificulty(){
@@ -419,7 +437,7 @@ public class ConnectFour{
         int dificultyLevel = chooseDificulty();
         chooseFirstPlayer();
         treeStartup(dificultyLevel);
-        printBoard();
+        printBoard(board);
         gameCycle();
     }
 }
