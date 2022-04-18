@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -23,7 +24,7 @@ class Board{
     int[] lastPlay;
 
     Board fatherNode;
-    Board[] children;
+    LinkedList<Board> children;
 
     int depth;
 
@@ -35,7 +36,7 @@ class Board{
         this.availablePlays = 42;
         this.lastPlay = new int[2];
         this.fatherNode = null;
-        this.children = null;
+        this.children = new LinkedList<Board>();
         this.depth = 0;
 
         for(int i = 0; i < 6; i++){
@@ -50,8 +51,8 @@ class Board{
         this.availablePlays = newFatherNode.availablePlays - 1;
         this.lastPlay = new int[2];
         this.fatherNode = newFatherNode;
-        this.children = null;
-        this.depth = inputDepth + 1;
+        this.children = new LinkedList<Board>();
+        this.depth = inputDepth;
     }
 }
 
@@ -61,8 +62,7 @@ class Board{
 public class ConnectFour{
     public static Scanner sc = new Scanner(System.in);
     public static Board board = new Board();
-    public static LinkedList<Board> tree = new LinkedList<Board>();
-    public static int currentDepth = 0;
+    public static Queue<Board> list = new LinkedList<Board>();
 
     /**
      * Jogador atual.
@@ -230,12 +230,26 @@ public class ConnectFour{
     /**
      * Criar o primeiro estado da árvore no início do jogo
      */
-    public static void treeStartup(){
+    public static void treeStartup(int dificultyLevel){
         int currentDepth = 0;
 
-        tree.add(board);
-        
-        for(int i = 0; i < 5; i++){
+        list.add(board);
+        System.out.println("DIFICULTY: " + dificultyLevel);
+        System.out.println("CURRENT NODE BEFORE: " + list.size());
+
+        while(!list.isEmpty()){
+            Board cNode = list.remove();
+            System.out.println("DEPTH ANTES: " + currentDepth);
+            currentDepth = cNode.depth + 1;
+            System.out.println("DEPTH DEPOIS: " + currentDepth);
+            if(currentDepth <= dificultyLevel){
+                findChildren(cNode, currentDepth);
+                System.out.println("CURRENT NODE: " + list.size());
+            }
+            else break;
+        }
+        /*
+        for(int i = 0; i < dificultyLevel; i++){
             int size = tree.size();
             System.out.println("CURRENT NODE BEFORE: " + size + ", iteration: " + i);
             for(int j = 0; j < size; j++){
@@ -246,7 +260,7 @@ public class ConnectFour{
             }
             currentDepth++;
             System.out.println("CURRENT NODES AFTER: " + size + ", iteration: " + i);
-        }
+        }*/
     }
     
     /**
@@ -275,8 +289,10 @@ public class ConnectFour{
                         child.matrix = matrixTemp;
                         child.lastPlay[0] = i;
                         child.lastPlay[1] = j;
-                        tree.add(child);
+                        currentBoard.children.add(child);
+                        list.add(child);
                         matrixTemp[i][j] = '-';
+                        break;
                     }
                 }
             }
@@ -303,7 +319,7 @@ public class ConnectFour{
             value = Integer.MIN_VALUE;      // min int value
             // for each child node
                 {
-                value = max(value, minimax(child, depth - 1, false));
+                    value = max(value, minimax(child, depth - 1, false));
                 }
             return value;
         }
@@ -312,7 +328,7 @@ public class ConnectFour{
             value = Integer.MAX_VALUE;        // max int value
             // for each child node
             {   
-            value  = min(value minimax(child, depth - 1 , true));
+                value  = min(value minimax(child, depth - 1 , true));
             }
             return value;
         }
@@ -357,7 +373,6 @@ public class ConnectFour{
     public static void gameCycle(){
         nextPlay();
         if(checkGameState(board)) return;
-        currentDepth++;
         gameCycle();
     }
 
@@ -390,10 +405,20 @@ public class ConnectFour{
         else PC = true;
     }
     
+    public static int chooseDificulty(){
+        System.out.println("\nChoose level of AI: \nFor Easy press 1\nFor Medium press 2\nFor Hard press 3");
+
+        int dificultyLevel = sc.nextInt();
+
+        if(dificultyLevel == 1) return 2;
+        else if(dificultyLevel == 2) return 3;
+        else return 5;
+    }
     public static void main(String[] args)
     {
+        int dificultyLevel = chooseDificulty();
         chooseFirstPlayer();
-        treeStartup();
+        treeStartup(dificultyLevel);
         printBoard();
         gameCycle();
     }
