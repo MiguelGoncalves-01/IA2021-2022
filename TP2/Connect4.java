@@ -23,27 +23,31 @@ class Board{
     int[] lastPlay;
 
     Board fatherNode;
+    Board[] children;
+
     /**
      * Inicia o tabuleiro com todas as posições a 0, representadas por "-"
      */
     Board(){
-        matrix = new char[7][6];
-        availablePlays = 42;
-        lastPlay = new int[2];
-        fatherNode = null;
+        this.matrix = new char[7][6];
+        this.availablePlays = 42;
+        this.lastPlay = new int[2];
+        this.fatherNode = null;
+        this.children = null;
 
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 7; j++){
-                matrix[j][i] = '-';
+                this.matrix[j][i] = '-';
             }
         }
     }
 
     Board(Board newFatherNode){
-        matrix = fatherNode.matrix;
-        availablePlays = fatherNode.availablePlays - 1;
-        lastPlay = new int[2];
+        this.matrix = newFatherNode.matrix;
+        this.availablePlays = newFatherNode.availablePlays - 1;
+        this.lastPlay = new int[2];
         this.fatherNode = newFatherNode;
+        this.children = null;
     }
 }
 
@@ -278,9 +282,8 @@ public class Connect4{
             //PC escolhe a próxima jogada e coloca o valor em 'column'
             System.out.println("Player: PC");
             System.out.print("Next Play: ");
-            column = sc.nextInt();
-            //column = findNextPCPlay();
-            //System.out.print(column);
+            column = findNextPCPlay();
+            System.out.print(column);
             System.out.println();
         }
         //Verifica se a coluna já está cheia

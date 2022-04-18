@@ -1,3 +1,4 @@
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -21,19 +22,36 @@ class Board{
      */
     int[] lastPlay;
 
+    Board fatherNode;
+    Board[] children;
+
+    int depth;
+
     /**
      * Inicia o tabuleiro com todas as posições a 0, representadas por "-"
      */
     Board(){
-        matrix = new char[7][6];
-        availablePlays = 42;
-        lastPlay = new int[2];
+        this.matrix = new char[7][6];
+        this.availablePlays = 42;
+        this.lastPlay = new int[2];
+        this.fatherNode = null;
+        this.children = null;
+        this.depth = 0;
 
         for(int i = 0; i < 6; i++){
             for(int j = 0; j < 7; j++){
-                matrix[j][i] = '-';
+                this.matrix[j][i] = '-';
             }
         }
+    }
+
+    Board(Board newFatherNode, int inputDepth){
+        this.matrix = newFatherNode.matrix;
+        this.availablePlays = newFatherNode.availablePlays - 1;
+        this.lastPlay = new int[2];
+        this.fatherNode = newFatherNode;
+        this.children = null;
+        this.depth = inputDepth + 1;
     }
 }
 
@@ -43,6 +61,9 @@ class Board{
 public class ConnectFour{
     public static Scanner sc = new Scanner(System.in);
     public static Board board = new Board();
+    public static LinkedList<Board> tree = new LinkedList<Board>();
+    public static int currentDepth = 0;
+
     /**
      * Jogador atual.
      * false = Humano,
@@ -71,19 +92,6 @@ public class ConnectFour{
         int tempX = board.lastPlay[0];
         int tempY = board.lastPlay[1];
 
-        /*
-        //UP
-        for(int i = 0; i < 3; i++){
-            tempY--;
-            if(outOfBounds(tempX, tempY)) break;
-            if(board.matrix[tempX][tempY] != lastPlayType) break;
-            counter++;
-        }
-        if(counter == 4) return true;
-        tempX = board.lastPlay[0];
-        tempY = board.lastPlay[1];
-        counter = 1;
-        */
         //DOWN
         for(int i = 0; i < 3; i++){
             tempY++;
@@ -176,11 +184,11 @@ public class ConnectFour{
      * Retorna TRUE se o jogo acabou.
      * @return false or true
      */
-    public static boolean checkGameState(){
-        char lastPlayType = board.matrix[board.lastPlay[0]][board.lastPlay[1]];
+    public static boolean checkGameState(Board currentBoard){
+        char lastPlayType = currentBoard.matrix[currentBoard.lastPlay[0]][currentBoard.lastPlay[1]];
         boolean formedLine = formedLine(lastPlayType);
 
-        if(board.availablePlays == 0 && !formedLine){
+        if(currentBoard.availablePlays == 0 && !formedLine){
             System.out.print("The game ended!\nIt was a DRAW!\n--------------\n");
             return true;
         }
@@ -220,6 +228,98 @@ public class ConnectFour{
     }
 
     /**
+     * Criar o primeiro estado da árvore no início do jogo
+     */
+    public static void treeStartup(){
+        int currentDepth = 0;
+
+        tree.add(board);
+        
+        for(int i = 0; i < 5; i++){
+            int size = tree.size();
+            System.out.println("CURRENT NODE BEFORE: " + size + ", iteration: " + i);
+            for(int j = 0; j < size; j++){
+                Board node = tree.get(j);
+                if(node.depth == currentDepth){
+                    findChildren(node, node.depth);
+                }
+            }
+            currentDepth++;
+            System.out.println("CURRENT NODES AFTER: " + size + ", iteration: " + i);
+        }
+    }
+    
+    /**
+     * Encontrar a próxima jogada do computador
+     * @return int (Valor da Coluna)
+     */
+    /*
+    public static int findNextPCPlay(){
+        return ;
+    }*/
+
+    /**
+     * Encontra todos os nós filhos do estado dado e adiciona-os à árvore
+     * @param currentBoard
+     */
+    public static void findChildren(Board currentBoard, int depth){
+        char[][] matrixTemp = currentBoard.matrix;
+        
+        for(int i = 0; i < 7; i++)
+        {
+            if(currentBoard.matrix[i][0] == '-'){
+                for(int j = 5; j >= 0; j--){
+                    if(currentBoard.matrix[i][j] == '-'){
+                        matrixTemp[i][j] = 'O';
+                        Board child = new Board(currentBoard, depth);
+                        child.matrix = matrixTemp;
+                        child.lastPlay[0] = i;
+                        child.lastPlay[1] = j;
+                        tree.add(child);
+                        matrixTemp[i][j] = '-';
+                    }
+                }
+            }
+        }
+    }
+
+    
+    /**
+     * Função MiniMax
+     * @param board
+     * @param depth
+     * @param maximizingPlayer
+     * @return
+     */
+    /*
+    public static int minimax(Board board, int depth, boolean maximizingPlayer){
+        int value;
+        boolean isTerminal = checkGameState(); // é terminal se estiver o tabuleiro estiver cheio ou tiver sido atingido vitória no estado atual do jogo
+        if (depth == 0 || isTerminal ) // or board está num estado terminal
+            return 0; // return node value
+
+        if (maximizingPlayer)
+        {
+            value = Integer.MIN_VALUE;      // min int value
+            // for each child node
+                {
+                value = max(value, minimax(child, depth - 1, false));
+                }
+            return value;
+        }
+        else    // minimizing player
+        {
+            value = Integer.MAX_VALUE;        // max int value
+            // for each child node
+            {   
+            value  = min(value minimax(child, depth - 1 , true));
+            }
+            return value;
+        }
+    }
+    */
+
+    /**
      * Função de próxima jogada. Ou pede ao jogador a sua próxima jogada, ou ao PC. Invoca a função updateBoard()
      */
     public static void nextPlay(){
@@ -235,9 +335,9 @@ public class ConnectFour{
             //PC escolhe a próxima jogada e coloca o valor em 'column'
             System.out.println("Player: PC");
             System.out.print("Next Play: ");
-            column = sc.nextInt();
             //column = findNextPCPlay();
-            //System.out.print(column);
+           // System.out.print(column);
+            column = sc.nextInt();
             System.out.println();
         }
         //Verifica se a coluna já está cheia
@@ -256,7 +356,8 @@ public class ConnectFour{
      */
     public static void gameCycle(){
         nextPlay();
-        if(checkGameState()) return;
+        if(checkGameState(board)) return;
+        currentDepth++;
         gameCycle();
     }
 
@@ -292,6 +393,7 @@ public class ConnectFour{
     public static void main(String[] args)
     {
         chooseFirstPlayer();
+        treeStartup();
         printBoard();
         gameCycle();
     }
