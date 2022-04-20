@@ -3,6 +3,16 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Scanner;
 
+
+/*
+OBJETIVOS
+
+FUNÇÂO DE AVALIAÇAO PARA MINIMAX
+
+GERAÇÂO DE MAIS ARVORE DE NOS
+
+*/
+
 /**
  * Class do Tabuleiro do jogo Connect4. Construção do tabuleiro e guardar o estado de jogo atual
  */
@@ -76,6 +86,8 @@ public class ConnectFour{
     public static Scanner sc = new Scanner(System.in);
     public static Board board = new Board();
     public static Queue<Board> list = new LinkedList<Board>();
+    public static boolean humanFirstPlay;
+    public static Board currentNode;
 
     /**
      * Jogador atual.
@@ -230,8 +242,11 @@ public class ConnectFour{
      * Função invocada depois do nextPlay(). Processa o pedido e atualiza o tabuleiro de acordo.
      */
     public static void updateBoard(int column){
+        int[] lastPlayTemp = new int[2];
         for(int i = 5; i >= 0; i--){
             if(board.matrix[column][i] == '-'){
+                lastPlayTemp[0] = column;
+                lastPlayTemp[1] = i;
                 if(PC){
                     board.matrix[column][i] = 'O';
                     board.lastPlay[0] = column;
@@ -248,6 +263,12 @@ public class ConnectFour{
         }
         printBoard(board);
         board.availablePlays--;
+
+        for(int i = 0; i < currentNode.children.size(); i++){
+            if(currentNode.children.get(i).lastPlay[0] == lastPlayTemp[0] && currentNode.children.get(i).lastPlay[1] == lastPlayTemp[1]){
+                currentNode = currentNode.children.get(i);
+            }
+        }
     }
 
     /**
@@ -277,10 +298,20 @@ public class ConnectFour{
      * Encontrar a próxima jogada do computador
      * @return int (Valor da Coluna)
      */
-    /*
     public static int findNextPCPlay(){
-        return ;
-    }*/
+        int column = 0;
+        int max = Integer.MIN_VALUE;
+
+        for(int i = 0; i < currentNode.children.size(); i++){
+            Board childrenNode = currentNode.children.get(i);
+            int tempValue = minimax(childrenNode, true);
+            if(tempValue > max){
+                max = tempValue;
+                column = childrenNode.lastPlay[0];
+            }
+        }
+        return column;
+    }
 
     /**
      * Encontra todos os nós filhos do estado dado e adiciona-os à árvore
@@ -319,33 +350,32 @@ public class ConnectFour{
      * @param maximizingPlayer
      * @return
      */
-    /*
-    public static int minimax(Board board, int depth, boolean maximizingPlayer){
+    public static int minimax(Board currentBoard, boolean maximizingPlayer){
         int value;
-        boolean isTerminal = checkGameState(); // é terminal se estiver o tabuleiro estiver cheio ou tiver sido atingido vitória no estado atual do jogo
-        if (depth == 0 || isTerminal ) // or board está num estado terminal
+        Board child;
+        boolean isTerminal = checkGameState(currentBoard); // é terminal se estiver o tabuleiro estiver cheio ou tiver sido atingido vitória no estado atual do jogo
+        if (currentBoard.children.size() == 0 || isTerminal ) // or board está num estado terminal
             return 0; // return node value
 
         if (maximizingPlayer)
         {
             value = Integer.MIN_VALUE;      // min int value
-            // for each child node
-                {
-                    value = max(value, minimax(child, depth - 1, false));
+            for(int i = 0; i < currentBoard.children.size(); i++){
+                    child = currentBoard.children.get(i);
+                    value = Math.max(value, minimax(child, false));
                 }
             return value;
         }
         else    // minimizing player
         {
             value = Integer.MAX_VALUE;        // max int value
-            // for each child node
-            {   
-                value  = min(value minimax(child, depth - 1 , true));
+            for(int i = 0; i < currentBoard.children.size(); i++){   
+                child = currentBoard.children.get(i);
+                value  = Math.min(value, minimax(child, true));
             }
             return value;
         }
     }
-    */
 
     /**
      * Função de próxima jogada. Ou pede ao jogador a sua próxima jogada, ou ao PC. Invoca a função updateBoard()
@@ -363,9 +393,8 @@ public class ConnectFour{
             //PC escolhe a próxima jogada e coloca o valor em 'column'
             System.out.println("Player: PC");
             System.out.print("Next Play: ");
-            //column = findNextPCPlay();
-           // System.out.print(column);
-            column = sc.nextInt();
+            column = findNextPCPlay();
+            System.out.print(column);
             System.out.println();
         }
         //Verifica se a coluna já está cheia
@@ -385,6 +414,13 @@ public class ConnectFour{
     public static void gameCycle(){
         nextPlay();
         if(checkGameState(board)) return;
+        gameCycle();
+    }
+
+    public static void gameCycle(int dificultyLevel){
+        nextPlay();
+        if(checkGameState(board)) return;
+        treeStartup(dificultyLevel);
         gameCycle();
     }
 
@@ -416,6 +452,7 @@ public class ConnectFour{
         if(randomNum == 0){
             PC = false;
             PCtree = false;
+            humanFirstPlay = false;
         }
         else{
             PC = true;
@@ -424,20 +461,24 @@ public class ConnectFour{
     }
     
     public static int chooseDificulty(){
-        System.out.println("\nChoose level of AI: \nFor Easy press 1\nFor Medium press 2\nFor Hard press 3");
+        System.out.println("\nChoose level of AI: \nFor Easy press 1\nFor Medium press 2\nFor Hard press 3\nFor Very Hard press 4 (generates whole tree)");
 
         int dificultyLevel = sc.nextInt();
 
         if(dificultyLevel == 1) return 2;
         else if(dificultyLevel == 2) return 3;
-        else return 5;
+        else if(dificultyLevel == 3) return 5;
+        else return Integer.MAX_VALUE;
     }
     public static void main(String[] args)
     {
+        currentNode = board;
+        humanFirstPlay = true;
         int dificultyLevel = chooseDificulty();
         chooseFirstPlayer();
-        treeStartup(dificultyLevel);
         printBoard(board);
+        if(humanFirstPlay) treeStartup(dificultyLevel);
+        else gameCycle(dificultyLevel);
         gameCycle();
     }
 }
