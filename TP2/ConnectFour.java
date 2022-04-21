@@ -269,6 +269,7 @@ public class ConnectFour{
                 currentNode = currentNode.children.get(i);
             }
         }
+        updateTree();
     }
 
     /**
@@ -293,6 +294,26 @@ public class ConnectFour{
             else break;
         }
     }
+
+    public static void updateTree(){
+        LinkedList<Board> tempList = new LinkedList<Board>();
+        Board tempNode;
+
+        tempList.add(currentNode);
+
+        while(!tempList.isEmpty()){
+            tempNode = tempList.remove();
+
+            if(tempNode.children.size() != 0){
+                for(int i = 0; i < tempNode.children.size(); i++){
+                    tempList.add(tempNode.children.get(i));
+                }
+            }
+            else{
+                findChildren(tempNode, tempNode.depth + 1);
+            }
+        }
+    }
     
     /**
      * Encontrar a próxima jogada do computador
@@ -309,7 +330,6 @@ public class ConnectFour{
                 max = tempValue;
                 column = childrenNode.lastPlay[0];
             }
-            System.out.println("VALOR: " + max);
         }
         return column;
     }
@@ -349,42 +369,43 @@ public class ConnectFour{
      */
     public static int evaluateBoard(Board currentBoard){
         int value = 0;
+        boolean alone= true;
 
         //Casos isolados
         for(int i = 0; i < 7; i++)
         {
              for(int j = 0; j < 6; j++)
              {
-                 if(currentBoard[i][j] == 'X'){
+                 if(currentBoard.matrix[i][j] == 'X'){
                      alone = true;
-                     if(!outOfBounds(i + 1,     j)) if(currentBoard[i + 1][j]     != '-') alone = false;
-                     if(!outOfBounds(i - 1,     j)) if(currentBoard[i - 1][j]     != '-') alone = false;
-                     if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
-                     if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
-                     if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
-                     if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
-                     if(!outOfBounds(i    , j + 1)) if(currentBoard[i][j + 1]     != '-') alone = false;
-                     if(!outOfBounds(i    , j - 1)) if(currentBoard[i][j - 1]     != '-') alone = false;
-                     if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
-                     if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
-                     if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
-                     if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i + 1,     j)) if(currentBoard.matrix[i + 1][j]     != '-') alone = false;
+                     if(!outOfBounds(i - 1,     j)) if(currentBoard.matrix[i - 1][j]     != '-') alone = false;
+                     if(!outOfBounds(i + 1, j + 1)) if(currentBoard.matrix[i + 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j - 1)) if(currentBoard.matrix[i - 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i + 1, j - 1)) if(currentBoard.matrix[i + 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j + 1)) if(currentBoard.matrix[i - 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i    , j + 1)) if(currentBoard.matrix[i][j + 1]     != '-') alone = false;
+                     if(!outOfBounds(i    , j - 1)) if(currentBoard.matrix[i][j - 1]     != '-') alone = false;
+                     if(!outOfBounds(i + 1, j + 1)) if(currentBoard.matrix[i + 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j - 1)) if(currentBoard.matrix[i - 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j + 1)) if(currentBoard.matrix[i - 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i + 1, j - 1)) if(currentBoard.matrix[i + 1][j - 1] != '-') alone = false;
                      if(alone) value += 1;           
                 }
-                if(currentBoard[i][j] == 'O'){
+                if(currentBoard.matrix[i][j] == 'O'){
                     alone = true;
-                    if(!outOfBounds(i + 1,     j)) if(currentBoard[i + 1][j]     != '-') alone = false;
-                    if(!outOfBounds(i - 1,     j)) if(currentBoard[i - 1][j]     != '-') alone = false;
-                    if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
-                    if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
-                    if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
-                    if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
-                    if(!outOfBounds(i    , j + 1)) if(currentBoard[i][j + 1]     != '-') alone = false;
-                    if(!outOfBounds(i    , j - 1)) if(currentBoard[i][j - 1]     != '-') alone = false;
-                    if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
-                    if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
-                    if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
-                    if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i + 1,     j)) if(currentBoard.matrix[i + 1][j]     != '-') alone = false;
+                    if(!outOfBounds(i - 1,     j)) if(currentBoard.matrix[i - 1][j]     != '-') alone = false;
+                    if(!outOfBounds(i + 1, j + 1)) if(currentBoard.matrix[i + 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j - 1)) if(currentBoard.matrix[i - 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i + 1, j - 1)) if(currentBoard.matrix[i + 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j + 1)) if(currentBoard.matrix[i - 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i    , j + 1)) if(currentBoard.matrix[i][j + 1]     != '-') alone = false;
+                    if(!outOfBounds(i    , j - 1)) if(currentBoard.matrix[i][j - 1]     != '-') alone = false;
+                    if(!outOfBounds(i + 1, j + 1)) if(currentBoard.matrix[i + 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j - 1)) if(currentBoard.matrix[i - 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j + 1)) if(currentBoard.matrix[i - 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i + 1, j - 1)) if(currentBoard.matrix[i + 1][j - 1] != '-') alone = false;
                     if(alone) value -= 1;           
                }
             }
@@ -397,11 +418,11 @@ public class ConnectFour{
              {
                     int counter = 1;
                     int temp = i;
-                    if(currentBoard[temp][j] == 'X')
+                    if(currentBoard.matrix[temp][j] == 'X')
                     {
                         if(!outOfBounds(temp + 1, j))
                         {
-                            while(currentBoard[temp+1][j] == 'X')
+                            while(currentBoard.matrix[temp+1][j] == 'X')
                             {
                                 counter++;
                                 temp++;
@@ -412,7 +433,7 @@ public class ConnectFour{
                         }
                         if(!outOfBounds(temp - 1, j))
                         {
-                            while(currentBoard[temp-1][j] == 'X')
+                            while(currentBoard.matrix[temp-1][j] == 'X')
                             {
                                 
                                 counter++;
@@ -429,11 +450,11 @@ public class ConnectFour{
 
                     counter = 1;
                     temp = i;
-                    if(currentBoard[temp][j] == 'O')
+                    if(currentBoard.matrix[temp][j] == 'O')
                     {
                         if(!outOfBounds(temp + 1, j))
                         {
-                            while(currentBoard[temp+1][j] == 'O')
+                            while(currentBoard.matrix[temp+1][j] == 'O')
                             {
                                 counter++;
                                 temp++;
@@ -444,7 +465,7 @@ public class ConnectFour{
                         }
                         if(!outOfBounds(temp - 1, j))
                         {
-                            while(currentBoard[temp-1][j] == 'O')
+                            while(currentBoard.matrix[temp-1][j] == 'O')
                             {
                                 
                                 counter++;
@@ -467,12 +488,12 @@ public class ConnectFour{
              for(int j = 0; j < 6; j++)
              {
                     int counter = 1;
-                    int temp = i;
-                    if(currentBoard[i][temp] == 'X')
+                    int temp = j;
+                    if(currentBoard.matrix[i][temp] == 'X')
                     {
                         if(!outOfBounds(i, temp + 1))
                         {
-                            while(currentBoard[i][temp + 1] == 'X')
+                            while(currentBoard.matrix[i][temp + 1] == 'X')
                             {
                                 counter++;
                                 temp++;
@@ -483,7 +504,7 @@ public class ConnectFour{
                         }
                         if(!outOfBounds(i, temp - 1))
                         {
-                            while(currentBoard[i][temp - 1] == 'X')
+                            while(currentBoard.matrix[i][temp - 1] == 'X')
                             {
                                 
                                 counter++;
@@ -500,11 +521,11 @@ public class ConnectFour{
 
                     counter = 1;
                     temp = j;
-                    if(currentBoard[i][temp] == 'O')
+                    if(currentBoard.matrix[i][temp] == 'O')
                     {
                         if(!outOfBounds(i, temp + 1))
                         {
-                            while(currentBoard[i][temp + 1] == 'O')
+                            while(currentBoard.matrix[i][temp + 1] == 'O')
                             {
                                 counter++;
                                 temp++;
@@ -515,7 +536,7 @@ public class ConnectFour{
                         }
                         if(!outOfBounds(i, temp - 1))
                         {
-                            while(currentBoard[i][temp - 1] == 'O')
+                            while(currentBoard.matrix[i][temp - 1] == 'O')
                             {
                                 
                                 counter++;
@@ -528,6 +549,135 @@ public class ConnectFour{
                         if(counter == 2) value -= 10;
                         else if(counter == 3) value -= 50;
                         else if(counter == 4) value -= 512;
+                    }
+            }
+        }
+
+        // obliqua  (com erro em mudanças de dureções)
+        for(int i = 0; i < 7; i++)                
+        {
+             for(int j = 0; j < 6; j++)
+             {
+                    int counter = 1;
+                    int tempi = i;
+                    int tempj = j;
+                    if(currentBoard.matrix[tempi][tempj] == 'X')
+                    {
+                        if(!outOfBounds(tempi + 1, tempj + 1))
+                        {
+                            while(currentBoard.matrix[tempi + 1][tempj + 1] == 'X')
+                            {
+                                counter++;
+                                tempi++;
+                                tempj++;
+                                if(outOfBounds(tempi + 1, tempj + 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(!outOfBounds(tempi - 1, tempj - 1))
+                        {
+                            while(currentBoard.matrix[tempi - 1][tempj - 1] == 'X')
+                            {
+                                counter++;
+                                tempi--;
+                                tempj--;
+                                if(outOfBounds(tempi - 1, tempj - 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(!outOfBounds(tempi + 1, tempj - 1))
+                        {
+                            while(currentBoard.matrix[tempi + 1][tempj - 1] == 'X')
+                            {
+                                counter++;
+                                tempi++;
+                                tempj--;
+                                if(outOfBounds(tempi + 1, tempj - 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(!outOfBounds(tempi - 1, tempj + 1))
+                        {
+                            while(currentBoard.matrix[tempi - 1][tempj + 1] == 'X')
+                            {
+                                counter++;
+                                tempi--;
+                                tempj++;
+                                if(outOfBounds(tempi - 1, tempj + 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(counter == 2) value += 10;
+                        else if(counter == 3) value += 50;
+                        else if(counter == 4) value += 512;
+                        
+                    }
+                    if(currentBoard.matrix[tempi][tempj] == 'O')
+                    {
+                        if(!outOfBounds(tempi + 1, tempj + 1))
+                        {
+                            while(currentBoard.matrix[tempi + 1][tempj + 1] == 'O')
+                            {
+                                counter++;
+                                tempi++;
+                                tempj++;
+                                if(outOfBounds(tempi + 1, tempj + 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(!outOfBounds(tempi - 1, tempj - 1))
+                        {
+                            while(currentBoard.matrix[tempi - 1][tempj - 1] == 'O')
+                            {
+                                counter++;
+                                tempi--;
+                                tempj--;
+                                if(outOfBounds(tempi - 1, tempj - 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(!outOfBounds(tempi + 1, tempj - 1))
+                        {
+                            while(currentBoard.matrix[tempi + 1][tempj - 1] == 'O')
+                            {
+                                counter++;
+                                tempi++;
+                                tempj--;
+                                if(outOfBounds(tempi + 1, tempj - 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(!outOfBounds(tempi - 1, tempj + 1))
+                        {
+                            while(currentBoard.matrix[tempi - 1][tempj + 1] == 'O')
+                            {
+                                counter++;
+                                tempi--;
+                                tempj++;
+                                if(outOfBounds(tempi - 1, tempj + 1)) break;
+                                
+                            }
+                            tempi = i;
+                            tempj = j;
+                        }
+                        if(counter == 2) value += 10;
+                        else if(counter == 3) value += 50;
+                        else if(counter == 4) value += 512;
+                        
                     }
             }
         } 
