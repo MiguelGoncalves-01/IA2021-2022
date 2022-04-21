@@ -754,13 +754,13 @@ public class ConnectFour{
      */
     public static void gameCycle(){
         nextPlay();
-        if(checkGameState(board)) return;
+        if(checkGameState(board)) System.exit(1);
         gameCycle();
     }
 
     public static void gameCycle(int dificultyLevel){
         nextPlay();
-        if(checkGameState(board)) return;
+        if(checkGameState(board)) System.exit(1);
         treeStartup(dificultyLevel);
         gameCycle();
     }
