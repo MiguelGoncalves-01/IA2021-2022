@@ -82,7 +82,7 @@ class Board{
 /**
  * Class main
  */
-public class ConnectFour{
+public class ConnectFourAlphaBeta{
     public static Scanner sc = new Scanner(System.in);
     public static Board board = new Board();
     public static Queue<Board> list = new LinkedList<Board>();
@@ -325,7 +325,7 @@ public class ConnectFour{
 
         for(int i = 0; i < currentNode.children.size(); i++){
             Board childrenNode = currentNode.children.get(i);
-            int tempValue = minimax(childrenNode, true);
+            int tempValue = minimax(childrenNode, Integer.MIN_VALUE, Integer.MAX_VALUE, true);
             if(tempValue >= max){
                 max = tempValue;
                 column = childrenNode.lastPlay[0];
@@ -719,7 +719,7 @@ public class ConnectFour{
      * @param maximizingPlayer
      * @return
      */
-    public static int minimax(Board currentBoard, boolean maximizingPlayer){
+    public static int minimax(Board currentBoard, int alpha, int beta, boolean maximizingPlayer){
         int value;
         Board child;
         boolean isTerminal = checkGameState(currentBoard); // é terminal se estiver o tabuleiro estiver cheio ou tiver sido atingido vitória no estado atual do jogo
@@ -731,7 +731,9 @@ public class ConnectFour{
             value = Integer.MIN_VALUE;      // min int value
             for(int i = 0; i < currentBoard.children.size(); i++){
                     child = currentBoard.children.get(i);
-                    value = Math.max(value, minimax(child, false));
+                    value = Math.max(value, minimax(child, alpha, beta, false));
+                    if(value >= beta) break;
+                    alpha = Math.max(alpha, value);
                 }
             return value;
         }
@@ -740,7 +742,9 @@ public class ConnectFour{
             value = Integer.MAX_VALUE;        // max int value
             for(int i = 0; i < currentBoard.children.size(); i++){   
                 child = currentBoard.children.get(i);
-                value  = Math.min(value, minimax(child, true));
+                value  = Math.min(value, minimax(child, alpha, beta, true));
+                if(value <= alpha) break;
+                beta = Math.min(beta, value);
             }
             return value;
         }
