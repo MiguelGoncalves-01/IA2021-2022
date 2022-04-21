@@ -351,122 +351,187 @@ public class ConnectFour{
         int value = 0;
 
         //Casos isolados
-        for(int i = 0; i < 7; i++)                // 7 horizontal / 6 vertical
+        for(int i = 0; i < 7; i++)
         {
              for(int j = 0; j < 6; j++)
              {
-                 if(currentBoard.matrix[i][j] == 'X'){
-                     boolean alone = true;
-                     for(int k = -1; k <= 1; k++){
-                         for(int l = -1; l <= 1; l++){
-                             if(!outOfBounds(i + k, j + l) && (k != 0 && l != 0)){
-                                 if(currentBoard.matrix[i + k][j + l] != '-') alone = false;
-                                 ;
-                             }
-                         }
-                     }
-                     if(alone) value += 1;
-                 }
-                 if(currentBoard.matrix[i][j] == 'O'){
-                    boolean alone = true;
-                    for(int k = -1; k < 1; k++){
-                        for(int l = -1; l < 1; l++){
-                            if(!outOfBounds(i + k, j + l) && (k != 0 && l != 0)){
-                                if(currentBoard.matrix[i + k][j + l] != '-') alone = false;
-                            }
-                        }
-                    }
-                    if(alone) value -= 1;
+                 if(currentBoard[i][j] == 'X'){
+                     alone = true;
+                     if(!outOfBounds(i + 1,     j)) if(currentBoard[i + 1][j]     != '-') alone = false;
+                     if(!outOfBounds(i - 1,     j)) if(currentBoard[i - 1][j]     != '-') alone = false;
+                     if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i    , j + 1)) if(currentBoard[i][j + 1]     != '-') alone = false;
+                     if(!outOfBounds(i    , j - 1)) if(currentBoard[i][j - 1]     != '-') alone = false;
+                     if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
+                     if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
+                     if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
+                     if(alone) value += 1;           
                 }
-                /*
-                //HORIZONTAIS
-                int counter = 1;
-                if(currentBoard.matrix[i][j] == 'X'){
-                    if(!outOfBounds(i + 1, j)){
-                        while(currentBoard.matrix[i+1][j] == 'X'){
-                            counter++;
-                            i++;
-                            if(outOfBounds(i + 1, j)) break;
-                        }
-                    }
-                    if(!outOfBounds(i - 1, j)){
-                        while(currentBoard.matrix[i-1][j] == 'X'){
-                            counter++;
-                            i--;
-                            if(outOfBounds(i - 1, j)) break;
-                        }
-                    }
-                    if(counter == 2) value += 10;
-                    else if(counter == 3) value += 50;
-                    else if(counter == 4) value += 512;
-                }
-                
-                counter = 1;
-                if(currentBoard.matrix[i][j] == 'O'){
-                    if(!outOfBounds(i + 1, j)){
-                        while(currentBoard.matrix[i+1][j] == 'O'){
-                            counter++;
-                            i++;
-                            if(outOfBounds(i + 1, j)) break;
-                        }
-                    }
-                    if(!outOfBounds(i - 1, j)){
-                        while(currentBoard.matrix[i-1][j] == 'O'){
-                            counter++;
-                            i--;
-                            if(outOfBounds(i - 1, j)) break;
-                        }
-                    }
-                    if(counter == 2) value -= 10;
-                    else if(counter == 3) value -= 50;
-                    else if(counter == 4) value -= 512;
-                }
-
-                 //VERTICAIS
-                 counter = 1;
-                 if(currentBoard.matrix[i][j] == 'X') {
-                    if(!outOfBounds(i, j + 1)){
-                        while(currentBoard.matrix[i][j + 1] == 'X'){
-                            counter++;
-                            j++;
-                            if(outOfBounds(i, j + 1)) break;
-                        }
-                    }
-                    if(!outOfBounds(i, j - 1)){
-                        while(currentBoard.matrix[i][j - 1] == 'X'){
-                            counter++;
-                            j--;
-                            if(outOfBounds(i, j - 1)) break;
-                        }
-                    }
-                    if(counter == 2) value += 10;
-                    else if(counter == 3) value += 50;
-                    else if(counter == 4) value += 512;
-                }
-
-                counter = 1;
-                if(currentBoard.matrix[i][j] == 'O') {
-                    if(!outOfBounds(i, j + 1)){
-                        while(currentBoard.matrix[i][j + 1] == 'O'){
-                            counter++;
-                            j++;
-                            if(outOfBounds(i, j + 1)) break;
-                        }
-                    }
-                    if(!outOfBounds(i, j - 1)){
-                        while(currentBoard.matrix[i][j - 1] == 'O'){
-                            counter++;
-                            j--;
-                            if(outOfBounds(i, j - 1)) break;
-                        }
-                    }
-                    if(counter == 2) value -= 10;
-                    else if(counter == 3) value -= 50;
-                    else if(counter == 4) value -= 512;
-                 }*/
+                if(currentBoard[i][j] == 'O'){
+                    alone = true;
+                    if(!outOfBounds(i + 1,     j)) if(currentBoard[i + 1][j]     != '-') alone = false;
+                    if(!outOfBounds(i - 1,     j)) if(currentBoard[i - 1][j]     != '-') alone = false;
+                    if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i    , j + 1)) if(currentBoard[i][j + 1]     != '-') alone = false;
+                    if(!outOfBounds(i    , j - 1)) if(currentBoard[i][j - 1]     != '-') alone = false;
+                    if(!outOfBounds(i + 1, j + 1)) if(currentBoard[i + 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j - 1)) if(currentBoard[i - 1][j - 1] != '-') alone = false;
+                    if(!outOfBounds(i - 1, j + 1)) if(currentBoard[i - 1][j + 1] != '-') alone = false;
+                    if(!outOfBounds(i + 1, j - 1)) if(currentBoard[i + 1][j - 1] != '-') alone = false;
+                    if(alone) value -= 1;           
+               }
             }
         }
-        return value;
+                
+        //HORIZONTAIS
+        for(int i = 0; i < 7; i++)                
+        {
+             for(int j = 0; j < 6; j++)
+             {
+                    int counter = 1;
+                    int temp = i;
+                    if(currentBoard[temp][j] == 'X')
+                    {
+                        if(!outOfBounds(temp + 1, j))
+                        {
+                            while(currentBoard[temp+1][j] == 'X')
+                            {
+                                counter++;
+                                temp++;
+                                if(outOfBounds(temp + 1, j)) break;
+                                
+                            }
+                            temp = i;
+                        }
+                        if(!outOfBounds(temp - 1, j))
+                        {
+                            while(currentBoard[temp-1][j] == 'X')
+                            {
+                                
+                                counter++;
+                                temp--;
+                                if(outOfBounds(temp - 1, j)) break;
+                                
+                            }
+                        }
+                        
+                        if(counter == 2) value += 10;
+                        else if(counter == 3) value += 50;
+                        else if(counter == 4) value += 512;
+                    }
+
+                    counter = 1;
+                    temp = i;
+                    if(currentBoard[temp][j] == 'O')
+                    {
+                        if(!outOfBounds(temp + 1, j))
+                        {
+                            while(currentBoard[temp+1][j] == 'O')
+                            {
+                                counter++;
+                                temp++;
+                                if(outOfBounds(temp + 1, j)) break;
+                                
+                            }
+                            temp = i;
+                        }
+                        if(!outOfBounds(temp - 1, j))
+                        {
+                            while(currentBoard[temp-1][j] == 'O')
+                            {
+                                
+                                counter++;
+                                temp--;
+                                if(outOfBounds(temp - 1, j)) break;
+                                
+                            }
+                        }
+                        
+                        if(counter == 2) value -= 10;
+                        else if(counter == 3) value -= 50;
+                        else if(counter == 4) value -= 512;
+                    }
+            }
+        }
+        
+        //Verticais
+        for(int i = 0; i < 7; i++)                
+        {
+             for(int j = 0; j < 6; j++)
+             {
+                    int counter = 1;
+                    int temp = i;
+                    if(currentBoard[i][temp] == 'X')
+                    {
+                        if(!outOfBounds(i, temp + 1))
+                        {
+                            while(currentBoard[i][temp + 1] == 'X')
+                            {
+                                counter++;
+                                temp++;
+                                if(outOfBounds(i, temp + 1)) break;
+                                
+                            }
+                            temp = j;
+                        }
+                        if(!outOfBounds(i, temp - 1))
+                        {
+                            while(currentBoard[i][temp - 1] == 'X')
+                            {
+                                
+                                counter++;
+                                temp--;
+                                if(outOfBounds(i, temp - 1)) break;
+                                
+                            }
+                        }
+                        
+                        if(counter == 2) value += 10;
+                        else if(counter == 3) value += 50;
+                        else if(counter == 4) value += 512;
+                    }
+
+                    counter = 1;
+                    temp = j;
+                    if(currentBoard[i][temp] == 'O')
+                    {
+                        if(!outOfBounds(i, temp + 1))
+                        {
+                            while(currentBoard[i][temp + 1] == 'O')
+                            {
+                                counter++;
+                                temp++;
+                                if(outOfBounds(i, temp + 1)) break;
+                                
+                            }
+                            temp = j;
+                        }
+                        if(!outOfBounds(i, temp - 1))
+                        {
+                            while(currentBoard[i][temp - 1] == 'O')
+                            {
+                                
+                                counter++;
+                                temp--;
+                                if(outOfBounds(i, temp - 1)) break;
+                                
+                            }
+                        }
+                        
+                        if(counter == 2) value -= 10;
+                        else if(counter == 3) value -= 50;
+                        else if(counter == 4) value -= 512;
+                    }
+            }
+        } 
+            return value;
     }
 
     /**
