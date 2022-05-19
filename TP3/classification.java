@@ -1,6 +1,3 @@
-
-
-
 public class classification {
 
 String classification_attributes;
@@ -25,9 +22,5 @@ int repetition;
 
     public void setRepetition(int repetition) {
         this.repetition = repetition;
-    }
-
-
-
-    
+    }   
 }
