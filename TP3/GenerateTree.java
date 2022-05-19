@@ -6,7 +6,7 @@ import java.util.Vector;
 
 public class GenerateTree {
  
-    Vector listofattributes;
+    Vector<String> listofattributes;
     List<Node> node;
     HashMap<String,Double > information_gain; 
     HashMap<String,String > information_gain_subAttribute; 
@@ -15,7 +15,7 @@ public class GenerateTree {
     List<String> sort;
 
 
-    public GenerateTree( Vector listofattributes, List<Node> node ,  HashMap<String,Double > information_gain ,  HashMap<String,String > information_gain_subAttribute ){
+    public GenerateTree( Vector<String> listofattributes, List<Node> node ,  HashMap<String,Double > information_gain ,  HashMap<String,String > information_gain_subAttribute ){
     
         this.listofattributes = listofattributes;
         this.node = node;
@@ -37,7 +37,6 @@ public class GenerateTree {
     
     public void create_tree() {
     
-        System.out.println("\nGenerating or Creating Tree .... \n");
         sort = new ArrayList();
         double aa =0;
         String loc ="";

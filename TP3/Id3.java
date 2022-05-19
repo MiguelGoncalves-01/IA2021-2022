@@ -6,72 +6,77 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
-
 public class Id3 {
 
-   static Scanner in  = new Scanner(System.in);
+   static Scanner sc  = new Scanner(System.in);
    static String [][] table = null;
    
     public static void main(String[] args) {
-        menu();
-        ID3_calculation obj = new ID3_calculation(table);
-        obj.calculate_class();
-        obj.calculate_attribute();
-        obj.calculate_entropy();
-        obj.information_gain();
-        
-        List<Node> node = obj.getNode();
-        HashMap<String,Double > information_gain = obj.getInformationGain();
-        HashMap<String,String > information_gain_subAttribute = obj.getInformationGain_of_subAttribute();
-        
-        Vector attributes = obj.getlistofAttributes();
-        GenerateTree tree = new GenerateTree(attributes , node , information_gain , information_gain_subAttribute  );
-        tree.create_tree();
-       tree.Display_attribute();
-        tree.display_tree();
-        
+       boolean moreFiles = true;
+       while(moreFiles){
+          System.out.println("\n");
+          moreFiles = chooseFile();
+          if(!moreFiles) System.exit(1);
+          ID3_calculation obj = new ID3_calculation(table);
+          obj.calculate_class();
+          obj.calculate_attribute();
+          obj.calculate_entropy();
+          obj.information_gain();
+          
+          List<Node> node = obj.getNode();
+          HashMap<String,Double > information_gain = obj.getInformationGain();
+          HashMap<String,String > information_gain_subAttribute = obj.getInformationGain_of_subAttribute();
+          
+          Vector<String> attributes = obj.getlistofAttributes();
+          GenerateTree tree = new GenerateTree(attributes , node , information_gain , information_gain_subAttribute);
+          tree.create_tree();
+          tree.Display_attribute();
+          tree.display_tree();
+
+       }
     }
     
-    
-    public static void menu(){
-    
-    String choose="";   
-    System.out.println("------- Decision Tree Implementation using ID3 Algorithm -------");
-    System.out.println("------- Select one DataSet -------");
-    System.out.println("------- Press 1 for Resturant-------");
-    System.out.println("------- Press 2 for Weather -------");
-    System.out.println("------- Press 3 for Iris -------");
-    
-    choose = in.nextLine();
-    
-    switch(choose){
-    
-        case "1":
-            readCSV("restaurant.csv");
-            change_numeric_to_name(1);
-        break;
-        
-        case "2":
-            readCSV("weather.csv");
-            change_numeric_to_name(2);
-        break;
-        
-        case "3":
-            readCSV("iris.csv");
-            change_numeric_to_name(3);
-        break;
-        
-        default:
-        System.out.println("Invalid Choose");
-        break;
-        
-    }
-    
+    public static boolean chooseFile(){
+      
+      System.out.println("Select one DataSet");
+      System.out.println("1: for Resturant");
+      System.out.println("2: for Weather");
+      System.out.println("3: for Iris");
+      System.out.println("q: to Stop");
+      System.out.print("Choice: ");
+      
+      String file = sc.nextLine();
+      
+      switch(file){
+      
+         case "1":
+               readCSV("restaurant.csv");
+               change_numeric_to_name(1);
+               break;
+         
+         case "2":
+               readCSV("weather.csv");
+               change_numeric_to_name(2);
+               break;
+         
+         case "3":
+               readCSV("iris.csv");
+               change_numeric_to_name(3);
+               break;
+         
+         case "q":
+               return false;
+         default:
+               System.out.println("Invalid Choice");
+               chooseFile();
+               break;
+         
+      }
+      return true;
     }
     
     
     public static void change_numeric_to_name( int i ){
-    
     
         if(i == 1){
          
@@ -118,17 +123,11 @@ public class Id3 {
                    table[j][7] = "F";
                 }
             
-                    
-                  
-            }
-            
+            }   
         }
-        else if(i ==2 ){
-        
+        else if(i == 2 ){
             for(int j = 1 ; j < table.length; j++){
-            
-                
-                
+
                     if( Integer.parseInt(table[j][1]) >= 80  ){
                        table[j][1] = "hot";
                     }
@@ -218,11 +217,9 @@ public class Id3 {
                        table[j][3] = "<=0.6";
                     }
                     
-                    
                 }
             
         }
-        
         
     }
     
@@ -237,7 +234,6 @@ public class Id3 {
         
         int row=0;
         int col=0;
-        
 
         try {
 

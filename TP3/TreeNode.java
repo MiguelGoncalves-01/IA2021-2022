@@ -3,17 +3,15 @@ import java.util.List;
 
 public class TreeNode {
 
-  static String root;
+  String root;
   static HashMap<String, List<String> > parent_child = new HashMap<String, List<String> > () ;
   static HashMap<String, List<String> > relation = new HashMap<String, List<String> > () ;
   
   
-  public void TreeNode(){}
+  public void TreeNodeId3(){}
   
   public void Set_root(String root){
-  
        this.root = root;
-  
   }
   
   public String get_root(){

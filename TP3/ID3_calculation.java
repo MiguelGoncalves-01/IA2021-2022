@@ -8,8 +8,8 @@ public class ID3_calculation {
     
     HashMap<String,Double > information_gain = new HashMap<String,Double>();
     HashMap<String,String > gain_per_subattribute = new HashMap<String,String>();
-    Vector attributes = new Vector();
-    Vector classification = new Vector();
+    Vector<String> attributes = new Vector<String>();
+    Vector<String> classification = new Vector<String>();
     List<Node> node = new ArrayList<>();
     
     double morethan_onezero = 0.009;
@@ -84,7 +84,6 @@ public class ID3_calculation {
     
         
         List<Integer> total_classification_num = new ArrayList<>();
-        double total_entropy=0;
        
         double total_rows  = table.length - 1;
         int count =0;
@@ -108,7 +107,7 @@ public class ID3_calculation {
       for(int z = 0 ; z <  total_classification_num.size(); z++){
       
            double ps =  total_classification_num.get(z);
-           double cls_entropy = -1* ( (ps/total_rows) * log(ps/total_rows,2) ) ;
+           double cls_entropy = -1 * ( (ps/total_rows) * log(ps/total_rows,2) ) ;
            entropy = entropy + cls_entropy;
       }
         
@@ -248,24 +247,7 @@ public class ID3_calculation {
             node.add( new Node(attributes.get(i).toString() , attri , listoffrequency.get(i) ,listoffrequency_index.get(i) ,listofclassifies.get(i) ) );
             
             
-        }
-        
-       
-        for(int i = 0 ; i < node.size(); i++ ){
-       
-            
-            for(int j = 0 ; j < node.get(i).getListofattribute().size(); j++ ){
-                   // System.out.println( node.get(i).listofattribute.get(j) +" = "+node.get(i).getFrequency().get(node.get(i).listofattribute.get(j) ));
-                   // System.out.println( node.get(i).listofattribute.get(j) +" = "+node.get(i).getFrequency_index() .get(node.get(i).listofattribute.get(j) ));
-           
-            }
-            
-            
-            
-        }
-        
-        
-        
+        }  
           System.out.println("Information Gain\n");
         
         // calculation
@@ -276,7 +258,6 @@ public class ID3_calculation {
             
                 if(attributes.get(i).equals(node.get(j).getAttribute() )){
                 
-                  double average_entro = 0;
                   double total_rows = table.length-1;
                   List<String> parts = node.get(j).getListofattribute();
                  // System.out.println(" "+ attributes.get(i) );
@@ -376,9 +357,7 @@ public class ID3_calculation {
                   }
                   
                   sum = Double.parseDouble(change);
-                  
-                //System.out.println("sum "+ sum);
-                // System.out.println(attributes.get(i).toString()+" sum "+ sum);
+      
                  double gain = entropy - sum;
                  DecimalFormat df3 = new DecimalFormat(".####");
                  change = df3.format(gain);
@@ -396,28 +375,14 @@ public class ID3_calculation {
                  
                  information_gain.put(attributes.get(i).toString(), gain);
                  System.out.println(attributes.get(i).toString()+ " = "+  gain);       
-                
-                 // if more than one value is 
-                 
                  
                 }
            
-                 
-                
             }
            
-            
         }
-         
-        
-        // for(String i :  gain_per_subattribute.keySet()  ){
-         
-        //     System.out.println(i +" "+gain_per_subattribute.get(i));
-         
-       //  }
         
     }
-    
     
     static double log(double x, int base)
 {
